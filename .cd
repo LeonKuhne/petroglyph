@@ -1,0 +1,12 @@
+#!/bin/bash
+
+title -n cave blog 
+warn " | petroglyph"
+help .cd | indent
+
+function serve() {
+  # open in WSL browser
+  cmd.exe /C start http://localhost:8000
+  # start server
+  python -m http.server 8000
+}

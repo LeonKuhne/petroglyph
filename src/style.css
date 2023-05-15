@@ -1,0 +1,43 @@
+:root {
+  --dark-stone: #0d0d0d;  /* almost black, for the darkest parts of the cave */
+  --mid-stone: #323232;   /* dark gray, for the cave walls */
+  --light-stone: #5d5d5d; /* lighter gray, for illuminated parts of the stone */
+  --mud-brown: #6b4423;   /* brown, for the cave floor or mud */
+  --crystal-blue: #2271b3; /* blue, for water or crystals */
+  --torch-light: #ff7f00; /* orange, for torchlight or other warm light sources */
+  --moss-green: #53784c; /* green, for moss or other cave vegetation */
+  --font-light: #f0f0f0; /* light color for text */
+  --font-dark: #1d1d1d;  /* dark color for text */
+}
+
+/* clear default styles */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+/* set journal's font to mono */
+#journal {
+  font-family: monospace;
+  white-space: pre-wrap;
+  /* color journal background */
+  background-color: black;
+  color: black;
+}
+
+/* blend in journal links */
+#journal a {
+  text-decoration: none;
+  color: black;
+}
+/* hover effect for journal links */
+#journal a:hover {
+  color: var(--font-dark);
+  background-color: var(--font-light);
+}
+
+.highlight {
+  color: var(--font-dark);
+  background-color: var(--font-light);
+}
