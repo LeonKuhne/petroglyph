@@ -4,6 +4,12 @@
       "name": "Solow-Swan Model",
       "tooltip": "The Solow-Swan Model, fundamental in economic growth theory, explains long-term economic growth based on labor, capital, and technological progress. It suggests an economy can reach a steady state of growth, where new investments simply maintain the status quo. The simplified formula is Y = F(K, AL), where Y is output, K is capital, L is labor, and A is technology level. Click for more details.",
       "url": "https://en.wikipedia.org/wiki/Solow%E2%80%93Swan_model"
+    }, {
+      "name": "day 2",
+      "entry": "day2.cave"
+    }, {
+      "name": "[!]",
+      "tooltip": "in progress"
     }
   ],
   "lights": [

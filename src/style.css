@@ -14,6 +14,8 @@
 body, html {
   margin: 0;
   padding: 0;
+  width: 100%;
+  height: 100%;
   font-family: sans-serif;
   background-color: black;
   /* hide cursor */
@@ -42,11 +44,14 @@ body, html {
   color: black;
   font-weight: bolder;
   text-decoration: underline;
+  /* increase clickable size without affecting layout */
+  padding: 1rem;
+  margin: -1rem;
 }
 /* hover effect for journal links */
 #journal a:hover {
-  /* invert */
   filter: hue-rotate(180deg);
+  cursor: pointer;
 }
 
 .highlight {

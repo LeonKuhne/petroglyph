@@ -1,10 +1,35 @@
 import { Lighting } from "./lighting.mjs"
 
+document.load_entry = async (name) => {
+  let text = await load_journal(name)   // load journal entry
+  const meta = await load_meta()        // load metadata 
+  text = encode_links(text, meta.links) // load links into text
+  const journal = document.querySelector("#journal")
+  journal.innerHTML = text
+  // add lighting
+  add_lights(journal, meta.lights)
+  lighting = new Lighting(journal)
+}
+
 // using fetch to load in a journal file
-async function load_journal(name) {
-  return await fetch("journal/" + name)
-    .then(response => response.text())
-    .then(text => text)
+async function load_journal(name, tries=0) {
+  // load journal entry from journal/name
+  // use journal/404.cave if request fails
+  return await fetch(`journal/${name}`)
+    .then(response => {
+      if (response.ok) {
+        return response.text()
+      } else {
+        throw new Error("404")
+      }
+    }
+  ).catch(error => {
+    if (tries < 1) {
+      return load_journal("404.cave", tries + 1)
+    } else {
+      throw error
+    }
+  })
 }
 
 // load links from file as json
@@ -20,9 +45,9 @@ function encode_links(text, links) {
   for (let link of links) {
     // verify link has name
     if (!link.name) throw "link missing name"
-    // verify link has url
-    if (!link.url) continue
-    let link_tag_start = `<a href="${link.url}"`
+    let link_tag_start = "<a "
+    if (link.url) link_tag_start += ` href="${link.url}"`
+    if (link.entry) link_tag_start +=` onclick="document.load_entry('${link.entry}')"`
     if (link.tooltip) link_tag_start += ` title="${link.tooltip}"`
     link_tag_start += ">"
     // replace the link in the text with the encoded link
@@ -60,19 +85,9 @@ function add_lights(elem, lights) {
   elem.innerHTML = text
 }
 
+var lighting = null
 window.onload = async () => {
-  // load in first journal entry
-  let text = await load_journal('day1.cave')
-  // load metadata 
-  const meta = await load_meta()
-  // load links into text
-  text = encode_links(text, meta.links)
-  // fill #journal with the text
-  const journal = document.querySelector("#journal")
-  journal.innerHTML = text
-  // add lights
-  add_lights(journal, meta.lights)
-  const lighting = new Lighting(journal)
+  await document.load_entry("day1.cave")
   setInterval(() => {
     lighting.draw()
   }, 50)
