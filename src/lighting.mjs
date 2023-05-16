@@ -3,11 +3,11 @@ export class Lighting {
   static GLOW = [0.01, 0.02, 0.03]
   static COLOR = [255, 230, 200]
   static DARK_RATE = 0.007
-  static TORCH_GROW_RATE = 1
-  static TORCH_SHRINK_RATE = 0.1
-  static TORCH_MAX = 20
-  static TORCH_MIN = 2
-  static TORCH_RADIUS = 5
+  static TORCH_GROW_RATE = 0.1
+  static TORCH_SHRINK_RATE = 0.01
+  static TORCH_MAX = 17
+  static TORCH_MIN = 5
+  static TORCH_RADIUS = 6
 
   constructor(journal) {
     // setup characters
@@ -20,7 +20,7 @@ export class Lighting {
         this.mouse_light.x = event.clientX
         this.mouse_light.y = event.clientY
       } else {
-        this.mouse_light = new Light(event.clientX, event.clientY, 0)
+        this.mouse_light = new Light(event.clientX, event.clientY, 0, true)
       }
       let brightness = this.mouse_light.brightness
       brightness += Lighting.TORCH_GROW_RATE
@@ -112,9 +112,10 @@ function elem_rgb(elem) {
 }
 
 export class Light {
-  constructor(x, y, brightness) {
+  constructor(x, y, brightness, ignore_scroll=false) {
     this.x = x
     this.y = y
+    this.ignore_scroll = ignore_scroll
     this.brightness = brightness
   }
 }
@@ -126,9 +127,17 @@ export function position_brightness(span, light) {
   // account for scroll position
   span_x -= window.scrollX
   span_y -= window.scrollY
+  let light_x, light_y
+  if (light.ignore_scroll) {
+    light_x = light.x
+    light_y = light.y
+  } else {
+    light_x = light.x - window.scrollX
+    light_y = light.y - window.scrollY
+  }
   // get the distance between the mouse and the span
   let distance = Math.sqrt(
-    Math.pow(light.x - span_x, 2) + Math.pow(light.y - span_y, 2))
+    Math.pow(light_x - span_x, 2) + Math.pow(light_y - span_y, 2))
   // apply S curve
   let brightness = 1 / (1 + Math.pow(Math.E, -distance))
   brightness = distance / Lighting.TORCH_RADIUS
