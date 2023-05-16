@@ -44,13 +44,16 @@ export class Lighting {
     window.dispatchEvent(new Event("resize"))
   }
 
+
   emit(x, y, iterations=100) {
+    const rand_offset = () => 
+      (Math.random() * 2 - 1) * Lighting.TORCH_RADIUS
     setTimeout(() => {
       this.move_torch(x, y)
       if (iterations > 0) {
         // move the light source randomly
-        x += (Math.random() - 0.5) * Lighting.TORCH_RADIUS
-        y += (Math.random() - 0.5) * Lighting.TORCH_RADIUS
+        x += rand_offset()
+        y += rand_offset()
         console.log(iterations)
         this.emit(x, y, iterations - 1)
       }
