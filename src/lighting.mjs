@@ -21,13 +21,13 @@ export class Lighting {
     // move fingers
     window.addEventListener("touchmove", event => {
       for (let touch of event.touches) {
-        this.move_torch(touch.clientX, touch.clientY)
+        this.emit(touch.clientX, touch.clientY)
       }
     })
     // tap screen
     window.addEventListener("touchstart", event => {
       for (let touch of event.touches) {
-        this.move_torch(touch.clientX, touch.clientY)
+        this.emit(touch.clientX, touch.clientY)
       }
     })
     // add static light sources
@@ -41,6 +41,19 @@ export class Lighting {
       this.draw()
     })
     window.dispatchEvent(new Event("resize"))
+  }
+
+  emit(x, y, iterations=100) {
+    setTimeout(() => {
+      this.move_torch(x, y)
+      if (iterations > 0) {
+        // move the light source randomly
+        x += (Math.random() - 0.5) * Lighting.TORCH_RADIUS
+        y += (Math.random() - 0.5) * Lighting.TORCH_RADIUS
+        console.log(iterations)
+        this.emit(x, y, iterations - 1)
+      }
+    }, 50)
   }
 
   move_torch(x, y) {

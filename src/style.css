@@ -56,12 +56,8 @@ body, html {
 
 /* if on mobile, disable scroll and make journal full screen */
 @media only screen and (max-width: 600px) {
-  #journal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
+  #jounal {
     height: 100%;
-    overflow: hidden;
+    width: 100%;
   }
 }
