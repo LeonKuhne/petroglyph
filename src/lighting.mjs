@@ -4,6 +4,7 @@ export class Lighting {
   static COLOR = [255, 230, 200]
   static DARK_RATE = 0.007
   static TORCH_GROW_RATE = 0.1
+  static EMIT_GROW_RATE = 1
   static TORCH_SHRINK_RATE = 0.01
   static TORCH_MAX = 17
   static TORCH_MIN = 5
@@ -44,19 +45,24 @@ export class Lighting {
     window.dispatchEvent(new Event("resize"))
   }
 
-
-  emit(x, y, iterations=10) {
+  emit(x, y, iterations=10, light=null) {
+    if (light == null)
+      light = new Light(x, y, Lighting.TORCH_MIN)
+      this.lights.push(light)
     const rand_offset = () => 
-      (Math.random() * 2 - 1) * Lighting.TORCH_RADIUS
+      (Math.random() * 2 - 1) * Lighting.TORCH_RADIUS * 2
     setTimeout(() => {
-      this.move_torch(x, y)
       if (iterations > 0) {
         // move the light source randomly
-        x += rand_offset()
-        y += rand_offset()
-        this.emit(x, y, iterations - 1)
+        light.x += rand_offset()
+        light.y += rand_offset()
+        light.brightness += Lighting.EMIT_GROW_RATE
+        this.emit(x, y, iterations - 1, light)
+      } else {
+        // remove the light source
+        light.brightness = 0
       }
-    }, 50)
+    }, 100)
   }
 
   move_torch(x, y) {
@@ -86,6 +92,8 @@ export class Lighting {
       color = apply_brightness(color, -Lighting.DARK_RATE)
       span.style.color = `rgb(${color[0]}, ${color[1]}, ${color[2]})`
     })
+    // remove dead lights
+    this.lights = this.lights.filter(light => light.brightness > 0)
   }
 
   light_span(span, lights=[]) {
