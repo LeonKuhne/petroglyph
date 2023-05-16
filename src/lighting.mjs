@@ -45,7 +45,7 @@ export class Lighting {
     window.dispatchEvent(new Event("resize"))
   }
 
-  emit(x, y, iterations=10, light=null) {
+  emit(x, y, iterations=20, light=null) {
     if (light == null)
       light = new Light(x, y, Lighting.TORCH_MIN)
       this.lights.push(light)
@@ -185,8 +185,7 @@ export function position_brightness(span, light) {
   // apply S curve
   //let brightness = 1 / (1 + Math.pow(Math.E, -distance))
   // if on mobile amplify radius
-  let radius = window.innerWidth < 600 ? Lighting.M_TORCH_RADIUS : Lighting.TORCH_RADIUS
-  let brightness = light.brightness - distance / radius
+  let brightness = light.brightness - distance / Lighting.TORCH_RADIUS
   return Math.max(0, brightness)
 }
 
