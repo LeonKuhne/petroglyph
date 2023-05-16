@@ -1,5 +1,5 @@
 const GLOW = [0.0005, 0.0002, 0.0003]
-const DARK_RATE = 0.0005
+const DARK_RATE = 0.0007
 const RECOVER_DELAY = 100
 const dimming = new Set()
 
@@ -50,8 +50,8 @@ function elem_rgb(elem) {
 function draw_torch(
   span, radius, x, y,
 ) {
-  // indicate the enterance
-  let brightness = position_brightness(span, 150, 100, 0)
+  // indicate the enterance, ambient light
+  let brightness = position_brightness(span, 150, 100, 0) * 10
   // indicate mouse position
   brightness += position_brightness(span, radius, x, y) - 0.5
   // get previous rgb values from style
@@ -98,10 +98,13 @@ export function highlight_characters(spans, radius) {
 }
 
 export function position_brightness(span, radius, x, y) {
-  if (!x || !y) return 0
+  if (x == undefined || y == undefined) return 0
   // get the span position
   let span_x = span.offsetLeft + span.offsetWidth / 2
   let span_y = span.offsetTop + span.offsetHeight / 2
+  // account for scroll position
+  span_x -= window.scrollX
+  span_y -= window.scrollY
   // get the distance between the mouse and the span
   let distance = Math.sqrt(
     Math.pow(x - span_x, 2) + Math.pow(y - span_y, 2))
