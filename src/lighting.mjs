@@ -16,17 +16,11 @@ export class Lighting {
     this.mouse_light = null 
     // use mouse as light source
     window.addEventListener("mousemove", event => {
-      if (this.mouse_light) {
-        this.mouse_light.x = event.clientX
-        this.mouse_light.y = event.clientY
-      } else {
-        this.mouse_light = new Light(event.clientX, event.clientY, 0, true)
-      }
-      let brightness = this.mouse_light.brightness
-      brightness += Lighting.TORCH_GROW_RATE
-      brightness = Math.min(Math.max(brightness, Lighting.TORCH_MIN), Lighting.TORCH_MAX)
-      this.mouse_light.brightness = brightness
-      this.draw()
+      this.move_torch(event.clientX, event.clientY)
+    })
+    // support mobile dragging
+    window.addEventListener("touchmove", event => {
+      this.move_torch(event.touches[0].clientX, event.touches[0].clientY)
     })
     // add static light sources
     for (let elem of document.querySelectorAll("span.light")) {
@@ -35,6 +29,20 @@ export class Lighting {
       let brightness = elem.getAttribute("brightness")
       this.lights.push(new Light(x, y, brightness))
     }
+  }
+
+  move_torch(x, y) {
+    if (this.mouse_light) {
+      this.mouse_light.x = x
+      this.mouse_light.y = y
+    } else {
+      this.mouse_light = new Light(x, y, 0, true)
+    }
+    let brightness = this.mouse_light.brightness
+    brightness += Lighting.TORCH_GROW_RATE
+    brightness = Math.min(Math.max(brightness, Lighting.TORCH_MIN), Lighting.TORCH_MAX)
+    this.mouse_light.brightness = brightness
+    this.draw()
   }
 
   draw() {
