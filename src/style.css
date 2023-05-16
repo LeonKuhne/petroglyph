@@ -53,3 +53,15 @@ body, html {
   color: var(--font-dark);
   background-color: var(--font-light);
 }
+
+/* if on mobile, disable scroll and make journal full screen */
+@media only screen and (max-width: 600px) {
+  #journal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+}

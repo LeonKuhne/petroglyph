@@ -18,9 +18,17 @@ export class Lighting {
     window.addEventListener("mousemove", event => {
       this.move_torch(event.clientX, event.clientY)
     })
-    // support mobile dragging
+    // move fingers
     window.addEventListener("touchmove", event => {
-      this.move_torch(event.touches[0].clientX, event.touches[0].clientY)
+      for (let touch of event.touches) {
+        this.move_torch(touch.clientX, touch.clientY)
+      }
+    })
+    // tap screen
+    window.addEventListener("touchstart", event => {
+      for (let touch of event.touches) {
+        this.move_torch(touch.clientX, touch.clientY)
+      }
     })
     // add static light sources
     window.addEventListener("resize", event => {
@@ -151,9 +159,10 @@ export function position_brightness(span, light) {
   let distance = Math.sqrt(
     Math.pow(light_x - span_x, 2) + Math.pow(light_y - span_y, 2))
   // apply S curve
-  let brightness = 1 / (1 + Math.pow(Math.E, -distance))
-  brightness = distance / Lighting.TORCH_RADIUS
-  brightness = light.brightness - brightness
+  //let brightness = 1 / (1 + Math.pow(Math.E, -distance))
+  // if on mobile amplify radius
+  let radius = window.innerWidth < 600 ? Lighting.M_TORCH_RADIUS : Lighting.TORCH_RADIUS
+  let brightness = light.brightness - distance / radius
   return Math.max(0, brightness)
 }
 
