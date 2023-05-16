@@ -31,6 +31,8 @@ body, html {
   /* center journal */
   width: max-content;
   margin: auto;
+  /* hide cursor */
+  cursor: none;
 }
 
 /* blend in journal links */

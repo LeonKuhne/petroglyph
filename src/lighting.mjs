@@ -1,0 +1,138 @@
+
+export class Lighting {
+  static GLOW = [0.01, 0.02, 0.03]
+  static COLOR = [255, 230, 200]
+  static DARK_RATE = 0.007
+  static TORCH_GROW_RATE = 1
+  static TORCH_SHRINK_RATE = 0.1
+  static TORCH_MAX = 20
+  static TORCH_MIN = 2
+  static TORCH_RADIUS = 5
+
+  constructor(journal) {
+    // setup characters
+    this.spans = span_chars(journal)
+    this.lights = []
+    this.mouse_light = null 
+    // use mouse as light source
+    window.addEventListener("mousemove", event => {
+      if (this.mouse_light) {
+        this.mouse_light.x = event.clientX
+        this.mouse_light.y = event.clientY
+      } else {
+        this.mouse_light = new Light(event.clientX, event.clientY, 0)
+      }
+      let brightness = this.mouse_light.brightness
+      brightness += Lighting.TORCH_GROW_RATE
+      brightness = Math.min(Math.max(brightness, Lighting.TORCH_MIN), Lighting.TORCH_MAX)
+      this.mouse_light.brightness = brightness
+      this.draw()
+    })
+    // add static light sources
+    for (let elem of document.querySelectorAll("span.light")) {
+      let x = elem.offsetLeft + elem.offsetWidth / 2
+      let y = elem.offsetTop + elem.offsetHeight / 2
+      let brightness = elem.getAttribute("brightness")
+      this.lights.push(new Light(x, y, brightness))
+    }
+  }
+
+  draw() {
+    let lights = [...this.lights]
+    if (this.mouse_light) lights.push(this.mouse_light)
+    // dim mouse
+    if (this.mouse_light && this.mouse_light.brightness > 0) {
+      this.mouse_light.brightness -= Lighting.TORCH_SHRINK_RATE
+    }
+    this.spans.forEach(span => {
+      let color = this.light_span(span, lights)
+      // dim the color
+      color = apply_brightness(color, -Lighting.DARK_RATE)
+      span.style.color = `rgb(${color[0]}, ${color[1]}, ${color[2]})`
+    })
+  }
+
+  light_span(span, lights=[]) {
+    // indicate the enterance, ambient light
+    let brightness = 0
+    for (let light of lights) {
+      brightness += position_brightness(span, light)
+    }
+    // get previous rgb values from style
+    let color = [0, 0, 0]
+    if (span.style.color != "") {
+      color = elem_rgb(span)
+    }
+    // blend the color from torch light to black
+    if (brightness < 0) return color
+    return apply_brightness(color, brightness)
+  }
+}
+
+export function span_chars(elem) {
+  // new text
+  let text = ""
+  // wrap all text nodes in spans
+  elem.childNodes.forEach(section => {
+    if (section.nodeType == Node.TEXT_NODE) {
+      section.textContent.split("").forEach(char => {
+        // ignore spaces/tabs/newlines
+        if (char == " " || char == "\n" || char == "\t") {
+          text += char
+        // wrap character in span
+        } else {
+          text += `<span class="char">${char}</span>`
+        }
+      })
+    } else {
+      span_chars(section)
+      text += section.outerHTML
+    }
+  })
+  // set the new text
+  elem.innerHTML = text
+  return elem.querySelectorAll("span.char")
+}
+
+function apply_brightness(colors, amount) {
+  return Object.entries(colors).map(entry => {
+    let [index, color] = entry
+    color += amount * Lighting.GLOW[index] * 255
+    color *= Lighting.COLOR[index] / 255
+    color = Math.floor(color)
+    color = Math.max(0, Math.min(255, color))
+    return color
+  })
+}
+
+function elem_rgb(elem) {
+  let color = elem.style.color.match(/\d+/g)
+  if (color == null) return [0, 0, 0]
+  return color.map(color => parseInt(color))
+}
+
+export class Light {
+  constructor(x, y, brightness) {
+    this.x = x
+    this.y = y
+    this.brightness = brightness
+  }
+}
+
+export function position_brightness(span, light) {
+  // get the span position
+  let span_x = span.offsetLeft + span.offsetWidth / 2
+  let span_y = span.offsetTop + span.offsetHeight / 2
+  // account for scroll position
+  span_x -= window.scrollX
+  span_y -= window.scrollY
+  // get the distance between the mouse and the span
+  let distance = Math.sqrt(
+    Math.pow(light.x - span_x, 2) + Math.pow(light.y - span_y, 2))
+  // apply S curve
+  let brightness = 1 / (1 + Math.pow(Math.E, -distance))
+  brightness = distance / Lighting.TORCH_RADIUS
+  brightness = light.brightness - brightness
+  return Math.max(0, brightness)
+}
+
