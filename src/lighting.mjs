@@ -45,7 +45,7 @@ export class Lighting {
   }
 
 
-  emit(x, y, iterations=100) {
+  emit(x, y, iterations=10) {
     const rand_offset = () => 
       (Math.random() * 2 - 1) * Lighting.TORCH_RADIUS
     setTimeout(() => {
@@ -54,7 +54,6 @@ export class Lighting {
         // move the light source randomly
         x += rand_offset()
         y += rand_offset()
-        console.log(iterations)
         this.emit(x, y, iterations - 1)
       }
     }, 50)
