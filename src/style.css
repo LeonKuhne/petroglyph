@@ -35,7 +35,7 @@ body, html {
   overflow: scroll;
   scrollbar-width: none;
   /* center journal */
-  width: max-content;
+  min-width: max-content;
   margin: auto;
 }
 
@@ -62,7 +62,6 @@ body, html {
 /* if on mobile, disable scroll and make journal full screen */
 @media only screen and (max-width: 600px) {
   #jounal {
-    height: 100%;
-    width: 100%;
+    min-height: max-content;
   }
 }
