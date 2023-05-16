@@ -32,6 +32,7 @@ export class Lighting {
     })
     // add static light sources
     window.addEventListener("resize", event => {
+      this.lights = []
       for (let elem of document.querySelectorAll("span.light")) {
         let x = elem.offsetLeft + elem.offsetWidth / 2
         let y = elem.offsetTop + elem.offsetHeight / 2
