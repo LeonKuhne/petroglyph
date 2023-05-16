@@ -23,12 +23,16 @@ export class Lighting {
       this.move_torch(event.touches[0].clientX, event.touches[0].clientY)
     })
     // add static light sources
-    for (let elem of document.querySelectorAll("span.light")) {
-      let x = elem.offsetLeft + elem.offsetWidth / 2
-      let y = elem.offsetTop + elem.offsetHeight / 2
-      let brightness = elem.getAttribute("brightness")
-      this.lights.push(new Light(x, y, brightness))
-    }
+    window.addEventListener("resize", event => {
+      for (let elem of document.querySelectorAll("span.light")) {
+        let x = elem.offsetLeft + elem.offsetWidth / 2
+        let y = elem.offsetTop + elem.offsetHeight / 2
+        let brightness = elem.getAttribute("brightness")
+        this.lights.push(new Light(x, y, brightness))
+      }
+      this.draw()
+    })
+    window.dispatchEvent(new Event("resize"))
   }
 
   move_torch(x, y) {
