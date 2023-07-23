@@ -1,7 +1,7 @@
 import { Lighting } from "./lighting.mjs"
 
 document.load_entry = async (name) => {
-  let text = await load_journal(name)   // load journal entry
+  let text = await load_journal(name + ".cave")   // load journal entry
   const meta = await load_meta()        // load metadata 
   text = encode_links(text, meta.links) // load links into text
   const journal = document.querySelector("#journal")
@@ -9,6 +9,14 @@ document.load_entry = async (name) => {
   // add lighting
   add_lights(journal, meta.lights)
   lighting = new Lighting(journal)
+  // update query param url
+  const urlParams = new URLSearchParams(window.location.search)
+  if (urlParams.get("entry") != name) {
+    urlParams.set("entry", name)
+    window.history.pushState(null, '', `${window.location.pathname}?${urlParams}`);
+  }
+  // update page title
+  document.title = `${name} | Petroglyph`
 }
 
 // using fetch to load in a journal file
@@ -86,9 +94,20 @@ function add_lights(elem, lights) {
 }
 
 var lighting = null
-window.onload = async () => {
-  await document.load_entry("day1.cave")
+
+const loadPage = async () => {
+  // find entry
+  const urlParams = new URLSearchParams(window.location.search)
+  const entry = urlParams.get("entry") || "Day 1"
+  // load entry
+  await document.load_entry(entry)
   setInterval(() => {
     lighting.draw()
   }, 50)
+
 }
+window.onload = loadPage
+
+window.addEventListener("popstate", event => {
+  loadPage()
+})
