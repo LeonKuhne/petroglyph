@@ -6,16 +6,40 @@
       "url": "https://en.wikipedia.org/wiki/Solow%E2%80%93Swan_model"
     }, {
       "name": "day 2",
-      "entry": "day2.cave"
+      "entry": "Day 2"
+    }, {
+      "name": "day 3",
+      "entry": "404"
+    }, {
+      "name": "cave generation prototype",
+      "url": "https://erode.leonk.dev"
+    }, {
+      "name": "particle life",
+      "url": "https://www.youtube.com/watch?v=p4YirERTVF0"
+    }, {
+      "name": "dot",
+      "url": "https://dot.leonk.dev"
+    }, {
+      "name": "csz",
+      "url": "https://csz.leonk.dev"
+    }, {
+      "name": "Space Trucker",
+      "tooltip": "still in progress"
     }, {
       "name": "[!]",
-      "tooltip": "in progress"
+      "tooltip": "CAUTION: work in progress"
     }
   ],
   "lights": [
     {
       "name": "FRESH AIR",
       "brightness": 20
+    }, {
+      "name": "I MAKE PROTOTYPES",
+      "brightness": 20
+    }, {
+      "name": "☼",
+      "brightness": 30
     }
   ]
 }

@@ -4,7 +4,9 @@ export class Lighting {
   static COLOR = [255, 230, 200]
   static DARK_RATE = 0.007
   static TORCH_GROW_RATE = 0.1
-  static EMIT_GROW_RATE = 1
+  static EMIT_GROW_RATE = 1.15
+  static EMIT_GROW_ITERATIONS = 10
+  static EMIT_GROW_DELAY = 100
   static TORCH_SHRINK_RATE = 0.01
   static TORCH_MAX = 17
   static TORCH_MIN = 5
@@ -45,7 +47,7 @@ export class Lighting {
     window.dispatchEvent(new Event("resize"))
   }
 
-  emit(x, y, iterations=20, light=null) {
+  emit(x, y, iterations=Lighting.EMIT_GROW_ITERATIONS, light=null) {
     if (light == null)
       light = new Light(x, y, Lighting.TORCH_MIN)
       this.lights.push(light)
@@ -56,13 +58,13 @@ export class Lighting {
         // move the light source randomly
         light.x += rand_offset()
         light.y += rand_offset()
-        light.brightness += Lighting.EMIT_GROW_RATE
+        light.brightness *= Lighting.EMIT_GROW_RATE
         this.emit(x, y, iterations - 1, light)
       } else {
         // remove the light source
         light.brightness = 0
       }
-    }, 100)
+    }, Lighting.EMIT_GROW_DELAY)
   }
 
   move_torch(x, y) {
